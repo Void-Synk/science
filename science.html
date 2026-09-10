@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nature & Environment — Climate Change</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #f6f7f0;
+    --surface: #edeee1;
+    --surface-2: #e4e6d6;
+    --forest: #1f3b2c;
+    --forest-2: #2e5240;
+    --sage: #7c9473;
+    --blue: #3f6583;
+    --clay: #b4784a;
+    --charcoal: #23261f;
+    --line: rgba(31,59,44,0.16);
+    --paper: #fbfbf6;
+
+    --font-display: 'Fraunces', serif;
+    --font-body: 'Work Sans', sans-serif;
+  }
+
+  *{ box-sizing:border-box; margin:0; padding:0; }
+
+  html,body{
+    height:100%;
+    background:var(--forest);
+    overflow:hidden;
+  }
+
+  body{
+    font-family:var(--font-body);
+    color:var(--charcoal);
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* ---------- Animations ---------- */
+  @keyframes slideUpFade {
+    0% { opacity: 0; transform: translateY(30px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+  .slide.active .anim-target {
+    opacity: 0;
+    animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+  .slide.active .delay-1 { animation-delay: 0.1s; }
+  .slide.active .delay-2 { animation-delay: 0.2s; }
+  .slide.active .delay-3 { animation-delay: 0.3s; }
+  .slide.active .delay-4 { animation-delay: 0.4s; }
+  .slide.active .delay-5 { animation-delay: 0.5s; }
+
+  /* ---------- Deck shell ---------- */
+  .deck{
+    position:relative;
+    width:100vw;
+    height:100vh;
+    background:var(--bg);
+    overflow:hidden;
+  }
+
+  .progress-rail{
+    position:fixed;
+    top:0; left:0; right:0;
+    height:3px;
+    background:rgba(31,59,44,0.1);
+    z-index:50;
+  }
+  .progress-fill{
+    height:100%;
+    width:10%;
+    background:var(--forest);
+    transition:width .5s cubic-bezier(.65,0,.35,1);
+  }
+
+  .slide{
+    position:absolute;
+    inset:0;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    padding: 8vh 7vw 12vh;
+    opacity:0;
+    transform:translateY(22px);
+    transition:opacity .55s ease, transform .55s ease;
+    pointer-events:none;
+  }
+  .slide.active{
+    opacity:1;
+    transform:translateY(0);
+    pointer-events:auto;
+    z-index:2;
+  }
+
+  .kicker{
+    font-family:var(--font-body);
+    font-size:13px;
+    font-weight:600;
+    letter-spacing:0.02em;
+    color:var(--sage);
+    margin-bottom:14px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .kicker::before{
+    content:"";
+    width:22px; height:1px;
+    background:var(--sage);
+    display:inline-block;
+  }
+
+  h1.title{
+    font-family:var(--font-display);
+    font-weight:600;
+    font-size:clamp(42px, 7vw, 92px);
+    line-height:1.02;
+    color:var(--forest);
+    letter-spacing:-0.01em;
+  }
+
+  h2.head{
+    font-family:var(--font-display);
+    font-weight:600;
+    font-size:clamp(28px, 4vw, 48px);
+    line-height:1.08;
+    color:var(--forest);
+    letter-spacing:-0.01em;
+    margin-bottom:0.5em;
+  }
+
+  p.lede{
+    font-size:clamp(16px, 1.5vw, 20px);
+    line-height:1.55;
+    color:var(--charcoal);
+    max-width:56ch;
+  }
+
+  .content{
+    max-width:1400px;
+    width:100%;
+    margin:0 auto;
+    height:100%;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+  }
+
+  .flex-layout {
+    display: flex;
+    gap: 40px;
+    align-items: center;
+    margin-top: 15px;
+  }
+  .flex-layout > div {
+    flex: 1;
+  }
+
+  .page-img {
+    width: 100%;
+    max-height: 45vh;
+    object-fit: cover;
+    object-position: center 20%;
+    border-radius: 8px;
+    border: 1px solid var(--line);
+    box-shadow: 0 8px 24px rgba(31,59,44,0.12);
+  }
+
+  /* ---------- Grid Cards ---------- */
+  .grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-top: 20px;
+  }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 20px;
+    transition: transform 0.2s ease;
+  }
+  .card h3 {
+    font-family: var(--font-display);
+    font-size: 20px;
+    color: var(--forest);
+    margin-bottom: 10px;
+    border-bottom: 2px solid var(--sage);
+    padding-bottom: 6px;
+  }
+  .card ul {
+    list-style: none;
+    padding: 0;
+  }
+  .card li {
+    font-size: 14.5px;
+    line-height: 1.5;
+    color: var(--charcoal);
+    margin-bottom: 10px;
+    position: relative;
+    padding-left: 16px;
+  }
+  .card li::before {
+    content: "•";
+    color: var(--clay);
+    font-weight: bold;
+    position: absolute;
+    left: 0;
+  }
+
+  /* ---------- Table Styling ---------- */
+  .custom-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+    background: var(--paper);
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--line);
+  }
+  .custom-table th, .custom-table td {
+    padding: 14px 18px;
+    text-align: left;
+    border-bottom: 1px solid var(--line);
+    font-size: 15px;
+  }
+  .custom-table th {
+    background: var(--forest);
+    color: var(--paper);
+    font-weight: 600;
+  }
+  .custom-table tr:last-child td {
+    border-bottom: none;
+  }
+
+  /* ---------- Bottom Nav ---------- */
+  .nav-bar{
+    position:fixed;
+    bottom:0; left:0; right:0;
+    height:9vh;
+    min-height:64px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 6vw;
+    background:linear-gradient(to top, var(--bg) 60%, transparent);
+    z-index:40;
+  }
+  .nav-count{
+    font-family:var(--font-body);
+    font-size:14px;
+    font-weight:600;
+    color:var(--forest-2);
+    letter-spacing:0.02em;
+    min-width:70px;
+  }
+  .nav-buttons{
+    display:flex;
+    gap:10px;
+  }
+  .nav-btn{
+    font-family:var(--font-body);
+    font-size:15px;
+    font-weight:600;
+    color:var(--paper);
+    background:var(--forest);
+    border:none;
+    padding:12px 22px;
+    border-radius:2px;
+    cursor:pointer;
+    transition:background .2s ease, opacity .2s ease, transform .15s ease;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .nav-btn:hover{ background:var(--forest-2); }
+  .nav-btn:active{ transform:scale(0.97); }
+  .nav-btn.ghost{
+    background:transparent;
+    color:var(--forest);
+    border:1px solid var(--line);
+  }
+  .nav-btn.ghost:hover{ background:rgba(31,59,44,0.06); }
+  .nav-btn:disabled{ opacity:0.3; cursor:default; pointer-events:none; }
+
+  .dots{
+    display:flex;
+    gap:6px;
+  }
+  .dot{
+    width:6px; height:6px;
+    border-radius:50%;
+    background:rgba(31,59,44,0.2);
+    transition:background .3s ease, width .3s ease;
+  }
+  .dot.active{ background:var(--forest); width:18px; border-radius:3px; }
+
+  /* ---------- Custom Elements ---------- */
+  .cover{
+    height:100%;
+    width:100%;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    position:relative;
+    background: radial-gradient(ellipse 60% 40% at 50% 12%, rgba(180,120,74,0.10), transparent 60%), var(--bg);
+  }
+  .cover .kicker{ justify-content:center; margin-bottom:20px; }
+  .cover .kicker::before{ display:none; }
+  .cover h1.title{ margin-bottom:16px; }
+
+  .cause-item, .effect-item {
+    display:flex;
+    gap:14px;
+    align-items:flex-start;
+    padding:11px 0;
+    border-bottom:1px solid rgba(31,59,44,0.08);
+  }
+  .cause-item:last-child, .effect-item:last-child { border-bottom:none; }
+  .cause-item h4, .effect-item h4 { font-size:15.5px; font-weight:600; color:var(--forest); margin-bottom:3px; }
+  .cause-item p, .effect-item p { font-size:14px; line-height:1.45; color:var(--charcoal); opacity:0.9; }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 900px){
+    .slide{ padding:7vh 6vw 16vh; overflow-y:auto; }
+    .flex-layout { flex-direction: column; gap:16px; }
+    .grid-3 { grid-template-columns: 1fr; }
+    .nav-bar{ padding:0 5vw; }
+    .nav-btn{ padding:10px 16px; font-size:14px; }
+    h1.title{ font-size:clamp(36px,10vw,60px); }
+  }
+</style>
+</head>
+<body>
+
+<div class="progress-rail"><div class="progress-fill" id="progressFill"></div></div>
+
+<div class="deck" id="deck">
+
+  <!-- SLIDE 1 — COVER -->
+  <section class="slide active" id="slide-0">
+    <div class="cover">
+      <img src="j.jpg" class="page-img anim-target" style="max-width: 480px; margin-bottom: 24px;" alt="Nature and Environment Cover">
+      <div class="kicker anim-target delay-1">Class 10 · Science & Technology</div>
+      <h1 class="title anim-target delay-2">Nature and<br>Environment</h1>
+      <p class="lede anim-target delay-3">Understanding Climate Change, its causes, regional impacts, and mitigation strategies for Nepal and the world.</p>
+    </div>
+  </section>
+
+  <!-- SLIDE 2 — INTRODUCTION -->
+  <section class="slide" id="slide-1">
+    <div class="content">
+      <div class="kicker anim-target">6.1 Climate Change: A Global Challenge</div>
+      <h2 class="head anim-target delay-1">What is Climate Change?</h2>
+      <div class="flex-layout">
+        <div>
+          <p class="lede anim-target delay-2" style="margin-bottom: 18px;">
+            <strong>Climate</strong> is the average weather pattern of a specific region over a long period, typically 30 years.
+          </p>
+          <p class="lede anim-target delay-3" style="margin-bottom: 18px;">
+            <strong>Climate Change</strong> refers to a significant and lasting change in these statistical weather patterns over decades or longer.
+          </p>
+          <p class="lede anim-target delay-4" style="font-size:15px; color:var(--clay);">
+            While Earth's climate has changed naturally throughout history, current warming is unprecedented in speed due to human activity.
+          </p>
+        </div>
+        <div class="anim-target delay-4">
+           <img src="s.jpg" class="page-img" alt="Climate Change Melting Ice">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 3 — OBSERVED LOCAL IMPACTS (NEW) -->
+  <section class="slide" id="slide-2">
+    <div class="content">
+      <div class="kicker anim-target">Community & Environmental Observations</div>
+      <h2 class="head anim-target delay-1">Observed Local Climate Changes</h2>
+      <p class="lede anim-target delay-2" style="font-size:15px; margin-bottom: 10px;">
+        Key environmental changes observed by communities and their direct effects:
+      </p>
+      
+      <table class="custom-table anim-target delay-3">
+        <thead>
+          <tr>
+            <th>Observed Climate Change</th>
+            <th>Effects on Environment & Community</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Warmer Winters</strong></td>
+            <td>Crops do not grow as well; emergence of new insects and agricultural pests.</td>
+          </tr>
+          <tr>
+            <td><strong>Erratic Monsoon</strong></td>
+            <td>Unexpected severe floods damage crops; acute water scarcity during dry seasons.</td>
+          </tr>
+          <tr>
+            <td><strong>Drying Water Sources</strong></td>
+            <td>Drastic reduction of water available for irrigation and daily household use.</td>
+          </tr>
+          <tr>
+            <td><strong>Ecological Shift</strong></td>
+            <td>Endangered medicinal plants and local wildlife species face heightened risk.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- SLIDE 4 — CAUSES (NATURAL) -->
+  <section class="slide" id="slide-3">
+    <div class="content">
+      <div class="kicker anim-target">Causes of Climate Change</div>
+      <h2 class="head anim-target delay-1">A. Natural Causes</h2>
+      <div class="flex-layout">
+        <div>
+          <div class="cause-item anim-target delay-2">
+            <div><h4>Solar Activities</h4><p>Changes in the sun's energy output directly influence Earth's climate balance.</p></div>
+          </div>
+          <div class="cause-item anim-target delay-3">
+            <div><h4>Earth's Reflectivity (Albedo)</h4><p>Ice and snow reflect sunlight back to space. As ice melts, darker ocean/land surfaces absorb more sunlight, accelerating warming.</p></div>
+          </div>
+          <div class="cause-item anim-target delay-4">
+            <div><h4>Volcanic Eruptions</h4><p>Eruptions release aerosols that temporarily cool the planet, but also emit greenhouse gases contributing to long-term warming.</p></div>
+          </div>
+        </div>
+        <div class="anim-target delay-5">
+           <img src="n.jpg" class="page-img" alt="Natural Causes of Climate Change">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 5 — CAUSES (HUMAN) -->
+  <section class="slide" id="slide-4">
+    <div class="content">
+      <div class="flex-layout">
+        <div>
+          <div class="kicker anim-target">Causes of Climate Change</div>
+          <h2 class="head anim-target delay-1">B. Human-Induced Causes</h2>
+          
+          <div class="cause-item anim-target delay-2">
+            <div><h4>Burning Fossil Fuels</h4><p>Combustion of coal, oil, and gas for energy, transport, and industry releases massive CO2 emissions.</p></div>
+          </div>
+          <div class="cause-item anim-target delay-3">
+            <div><h4>Industrialization</h4><p>Cement, steel, and plastic production rely heavily on fossil fuels, releasing major pollutants.</p></div>
+          </div>
+          <div class="cause-item anim-target delay-4">
+            <div><h4>Deforestation</h4><p>Forests act as natural "carbon sinks". Cutting trees destroys carbon storage and releases stored CO2.</p></div>
+          </div>
+          <div class="cause-item anim-target delay-5">
+            <div><h4>Agriculture & Livestock</h4><p>Unsustainable farming practices and livestock rearing release potent greenhouse gases like methane (CH4).</p></div>
+          </div>
+        </div>
+        <div class="anim-target delay-5">
+           <img src="c.jpg" class="page-img" alt="Human Induced Causes">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 6 — GLOBAL EFFECTS -->
+  <section class="slide" id="slide-5">
+    <div class="content">
+      <div class="flex-layout">
+        <div>
+          <div class="kicker anim-target">Global Impacts</div>
+          <h2 class="head anim-target delay-1">Effects of Climate Change</h2>
+          
+          <div class="effect-item anim-target delay-2">
+            <div><h4>Extreme Weather Events</h4><p>Increased frequency of severe droughts, flash floods, and unseasonal storms causing crop failures.</p></div>
+          </div>
+          <div class="effect-item anim-target delay-3">
+            <div><h4>Rising Sea Levels</h4><p>Thermal ocean expansion and melting polar glaciers threaten coastal cities and low-lying islands.</p></div>
+          </div>
+          <div class="effect-item anim-target delay-4">
+            <div><h4>Loss of Biodiversity</h4><p>Species unable to adapt face extinction risk, disrupting ecosystem stability.</p></div>
+          </div>
+          <div class="effect-item anim-target delay-5">
+            <div><h4>Health & Economic Costs</h4><p>Rise in vector-borne diseases, heatstrokes, malnutrition, and billions lost in damaged infrastructure.</p></div>
+          </div>
+        </div>
+        <div class="anim-target delay-4">
+           <img src="i.jpg" class="page-img" alt="Effects of Climate Change">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 7 — NEPAL EVIDENCE -->
+  <section class="slide" id="slide-6">
+    <div class="content">
+      <div class="flex-layout">
+        <div class="anim-target delay-2">
+           <img src="p.jpg" class="page-img" alt="Climate Change in Nepal">
+        </div>
+        <div>
+          <div class="kicker anim-target">Local Evidence</div>
+          <h2 class="head anim-target delay-1">Evidence in Nepal</h2>
+          <p class="lede anim-target delay-2" style="font-size:15px; margin-bottom:15px;">Nepal contributes minimally to global GHG emissions, yet remains highly vulnerable to climate impacts.</p>
+          
+          <div class="effect-item anim-target delay-2">
+            <div><h4>Rapid Temperature Rise</h4><p>Average temperature is increasing at approximately 0.06°C per year.</p></div>
+          </div>
+          <div class="effect-item anim-target delay-3">
+            <div><h4>Drying Natural Water Sources</h4><p>Rivers, lakes, and freshwater springs are rapidly drying up.</p></div>
+          </div>
+          <div class="effect-item anim-target delay-4">
+            <div><h4>GLOF Risk</h4><p>Glacial Lake Outburst Floods pose immediate catastrophic danger to downstream communities.</p></div>
+          </div>
+          <div class="effect-item anim-target delay-5">
+            <div><h4>Mountain Snow Depletion</h4><p>Rapid snow and ice melt are reducing the height and snowlines of Himalayan peaks.</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 8 — NEPAL REGIONAL IMPACTS (NEW) -->
+  <section class="slide" id="slide-7">
+    <div class="content">
+      <div class="kicker anim-target">Geography-Specific Vulnerabilities</div>
+      <h2 class="head anim-target delay-1">Impacts Across Nepal's Regions</h2>
+      
+      <div class="grid-3 anim-target delay-2">
+        <div class="card">
+          <h3>Mountain Region</h3>
+          <ul>
+            <li>Accelerated glacial melting and glacier retreat.</li>
+            <li>High risk of Glacial Lake Outburst Floods (GLOFs).</li>
+            <li>Disruption to alpine ecology and trekking tourism.</li>
+          </ul>
+        </div>
+        
+        <div class="card">
+          <h3>Hills Region</h3>
+          <ul>
+            <li>Frequent rainfall-induced landslides and soil erosion.</li>
+            <li>Changing crop cultivation patterns and dates.</li>
+            <li>Drying natural drinking springs and traditional wells.</li>
+          </ul>
+        </div>
+        
+        <div class="card">
+          <h3>Terai Region</h3>
+          <ul>
+            <li>Severe river flooding and prolonged drought spells.</li>
+            <li>Extreme heatwaves affecting agricultural labor.</li>
+            <li>Habitats loss threatening lowland wildlife species.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 9 — INDIVIDUAL MITIGATION -->
+  <section class="slide" id="slide-8">
+    <div class="content">
+      <div class="kicker anim-target">Control and Mitigation Measures</div>
+      <h2 class="head anim-target delay-1">Individual & Personal Action</h2>
+      <div class="flex-layout">
+        <div>
+          <div class="effect-item anim-target delay-2">
+            <div><h4>Reduce Carbon Emissions</h4>
+            <p>Walk or cycle for short journeys. Utilize public transit. Turn off lights and idle electronics.</p></div>
+          </div>
+          <div class="effect-item anim-target delay-3">
+            <div><h4>Emphasize Carbon Storage</h4>
+            <p>Plant trees across school compounds. Actively participate in community afforestation campaigns.</p></div>
+          </div>
+          <div class="effect-item anim-target delay-4">
+            <div><h4>Behavioral Change</h4>
+            <p>Practice 3Rs (Reduce, Reuse, Recycle), avoid single-use plastics, conserve water, and try weekly plant-based diets.</p></div>
+          </div>
+        </div>
+        <div class="anim-target delay-5">
+           <img src="s.png" class="page-img" alt="Mitigation Measures">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 10 — GLOBAL MEASURES & CASE STUDY -->
+  <section class="slide" id="slide-9">
+    <div class="content">
+      <div class="flex-layout">
+        <div>
+          <div class="kicker anim-target">Policy & Research Focus</div>
+          <h2 class="head anim-target delay-1">Global Measures & Case Study</h2>
+          
+          <div class="effect-item anim-target delay-2">
+            <div><h4>Renewable Energy Transition</h4>
+            <p>Transitioning energy grids to hydro, solar, and wind while improving industrial energy efficiency.</p></div>
+          </div>
+          <div class="effect-item anim-target delay-3">
+            <div><h4>Enforcing Forest Policies</h4>
+            <p>Enforcing strict legal protections for national forests and supporting climate-resilient agriculture.</p></div>
+          </div>
+          <div class="effect-item anim-target delay-4">
+            <div><h4>Case Study: Imja Glacial Lake</h4>
+            <p>Imja Lake in the Everest region serves as a prime example of GLOF mitigation efforts, where engineering lowering projects reduced water levels to protect downstream settlements.</p></div>
+          </div>
+        </div>
+        <div class="anim-target delay-5">
+           <img src="aa.jpg" class="page-img" alt="Government and Global Measures">
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<div class="nav-bar">
+  <div class="nav-count" id="navCount">01 / 10</div>
+  <div class="dots" id="navDots"></div>
+  <div class="nav-buttons">
+    <button class="nav-btn ghost" id="prevBtn">← Previous</button>
+    <button class="nav-btn" id="nextBtn">Next →</button>
+  </div>
+</div>
+
+<script>
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const total = slides.length;
+  let current = 0;
+
+  const progressFill = document.getElementById('progressFill');
+  const navCount = document.getElementById('navCount');
+  const navDots = document.getElementById('navDots');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+
+  // Build dots
+  slides.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i === 0 ? ' active' : '');
+    d.addEventListener('click', () => goTo(i));
+    navDots.appendChild(d);
+  });
+  const dotEls = Array.from(navDots.children);
+
+  function pad(n){ return n < 10 ? '0' + n : '' + n; }
+
+  function render(){
+    slides.forEach((s, i) => {
+      if(i === current) {
+        s.classList.remove('active');
+        void s.offsetWidth; 
+        s.classList.add('active');
+      } else {
+        s.classList.remove('active');
+      }
+    });
+    dotEls.forEach((d, i) => d.classList.toggle('active', i === current));
+    progressFill.style.width = ((current + 1) / total * 100) + '%';
+    navCount.textContent = pad(current + 1) + ' / ' + pad(total);
+    prevBtn.disabled = current === 0;
+    nextBtn.textContent = current === total - 1 ? 'Restart ↻' : 'Next →';
+  }
+
+  function goTo(i){
+    if (i < 0 || i > total - 1) return;
+    current = i;
+    render();
+  }
+
+  prevBtn.addEventListener('click', () => goTo(current - 1));
+  nextBtn.addEventListener('click', () => {
+    if (current === total - 1) { goTo(0); } else { goTo(current + 1); }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight') {
+      if (current === total - 1) { goTo(0); } else { goTo(current + 1); }
+    }
+    if (e.key === 'ArrowLeft') goTo(current - 1);
+  });
+
+  render();
+</script>
+
+</body>
+</html>
